@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+SECRET=${1?Error: no secret given}
+TAG=${2?Error: no tag given}
+echo -e "${RED}Secret : $SECRET | Tag : $TAG ${NC}"
+
+echo -e "${RED}Installing Proxy.. @Purya${NC}"
+sudo apt-get -y update && sudo apt-get -y upgrade
+sudo apt-get -y install tmux git curl build-essential libssl-dev zlib1g-dev bwm-ng
+sudo git clone https://github.com/TelegramMessenger/MTProxy
+
+cd MTProxy && sudo make && cd objs/bin
+sudo curl -s https://core.telegram.org/getProxySecret -o proxy-secret
+sudo curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
+sudo cat > /root/launcher <<EOL
+#!/usr/bin/env bash
+
+while true; do
+	cd /root/MTProxy/objs/bin
+	sudo ./mtproto-proxy -u nobody -p 8870 -H 443 -S $SECRET -S 00b5ba98ae18ef9ee96127570c0a9281 -S 32b920dffb51643028e2f6b878d4eac1 -D mail.google.com -P $TAG --aes-pwd proxy-secret proxy-multi.conf -M 16;
+	sleep 2; 
+done;
+EOL
+chmod +x /root/launcher
+sudo cat > /etc/systemd/system/purya.service <<EOL
+[Unit]
+Description=purya
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root
+ExecStart=/root/launcher
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOL
+systemctl daemon-reload
+systemctl restart purya.service
+systemctl enable purya.service
+
+RED='\033[0;31m'
+echo -e "${RED}Proxy Installed! @Purya${NC}"
+echo -e "${RED}Restaring in 4s ...${NC}"
+sleep 1
+echo -e "${RED}3s ...${NC}"
+sleep 1
+echo -e "${RED}2s ...${NC}"
+sleep 1
+echo -e "${RED}1s ...${NC}"
+sleep 1
+
+reboot
