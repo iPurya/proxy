@@ -16,7 +16,7 @@ sudo cat > /root/launcher <<EOL
 #!/usr/bin/env bash
 
 while true; do
-	cd /root/MTProxy/objs/bin
+	cd /root/proxy/MTProxy/objs/bin
 	sudo ./mtproto-proxy -u nobody -p 8870 -H 443 -S $SECRET -S 00b5ba98ae18ef9ee96127570c0a9281 -S 32b920dffb51643028e2f6b878d4eac1 -D mail.google.com -P $TAG --aes-pwd proxy-secret proxy-multi.conf -M 16;
 	sleep 2; 
 done;
