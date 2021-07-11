@@ -6,9 +6,9 @@
 ## Run
 `./purya <SECRET> <TAG>`
 
-For <TAG>, you must put you admin tag that you got from @MTProxybot.
+For TAG, you must put you admin tag that you got from @MTProxybot.
  
-and for <SECRET> you can create a random hash with:
+and for SECRET you can create a random hash with:
  
 `head -c 16 /dev/urandom | xxd -ps`
  
